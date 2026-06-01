@@ -5,7 +5,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import mockedCats from "../../../mocks/cats.json";
 import Pets from "../Pets";
 
-// mocking
 const server = setupServer(
   http.get("http://localhost:4000/cats", () => {
     return HttpResponse.json(mockedCats, { status: 200 });
@@ -35,4 +34,23 @@ describe("Test Pets Component", () => {
       catCards[3],
     ]);
   });
+
+  test("Test Favoured Filter", async () => {
+    render(<Pets />);
+    await screen.findAllByRole("article");
+    fireEvent.change(screen.getByLabelText(/Favourite/i), {
+      target: { value: "favoured" },
+    });
+    expect(screen.getAllByRole("article").length).toBe(4);
+  });
+
+  test("Test Not Favoured Filter", async () => {
+    render(<Pets />);
+    await screen.findAllByRole("article");
+    fireEvent.change(screen.getByLabelText(/Favourite/i), {
+      target: { value: "not favoured" },
+    });
+    expect(screen.getAllByRole("article").length).toBe(1);
+  });
+
 });
